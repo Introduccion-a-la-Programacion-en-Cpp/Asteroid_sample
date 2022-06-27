@@ -11,6 +11,7 @@
 #include "SDL_mixer.h"
 #include "InputModule.h"
 #include "GSLogoState.h"
+#include "GSMainMenuState.h"
 
 using namespace std;
 
@@ -20,8 +21,7 @@ using namespace std;
 
 
 ///////// Variables y Constantes Globales /////////////
-const int WIDTH = 640;
-const int HEIGHT = 480;
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_bool isGameRunning = SDL_TRUE;
@@ -60,6 +60,7 @@ void initEngine()
     resourceManager.musicAssets = &musicAssets;
     resourceManager.gameStages = &gameStages;
     resourceManager.inputState = &gameInputState;
+    resourceManager.renderer = renderer;
 
     // Starting Game stage
     GameStage logoGameStage;
@@ -85,45 +86,7 @@ void destroyEngine() {
 
 void loadAssets() {
 
-    // Cargo el Logo principal.
-    string filePath = "assets/img/logo.png";
-    SDL_Texture* texture = IMG_LoadTexture(renderer, filePath.c_str());
-    SDL_Rect dest;
-    dest.x = WIDTH >> 2;
-    dest.y = 0;
-    dest.w = WIDTH >> 1;
-    dest.h = HEIGHT >> 1;
-
-    Sprite logoSprite;
-    logoSprite.dest = dest;
-    logoSprite.texture = texture;
-    spritesAssets.push_back(logoSprite);
-
-    // Cargo el texto...
-    string fontfilePath = "assets/fonts/arial.ttf";
-
-    TTF_Font* Sans = TTF_OpenFont(fontfilePath.c_str(), 24); //this opens a font style and sets a size
-
-    SDL_Color White = { 255, 255, 255 };  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
-
-    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, "Project ready...", White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
-
-    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); //now you can convert it into a texture
-
-    SDL_Rect Message_rect; //create a rect
-    Message_rect.w = WIDTH * 0.65; // controls the width of the rect
-    Message_rect.h = HEIGHT * 0.10; // controls the height of the rect
-    Message_rect.x = (WIDTH >> 1) - (Message_rect.w >> 1);  //controls the rect's x coordinate 
-    Message_rect.y = HEIGHT >> 1; // controls the rect's y coordinte
-
-    Text mainText;
-    mainText.font = Sans;
-    mainText.color = White;
-    mainText.surface = surfaceMessage;
-    mainText.texture = Message;
-    mainText.dest = Message_rect;
-
-    textAssets.push_back(mainText);
+   
 
     // Cargo Sonidos y BGM
     string soundFilePath = "assets/bgm/littleidea.mp3";
@@ -181,10 +144,10 @@ void inputUpdate() {
 }
 
 // Para ser usado en distintos contadores..
-float timer = 1.0f * 1000; // 1000 ms
+//float timer = 1.0f * 1000; // 1000 ms
 
 void updateGame(float deltaTime) {
-    const float BLINK_SPEED = 5.0f;
+   /* const float BLINK_SPEED = 5.0f;
 
     timer -= BLINK_SPEED * deltaTime;
 
@@ -192,7 +155,7 @@ void updateGame(float deltaTime) {
     if (timer <= 0.0f) {
         timer = 1.0f * 1000;
         textAssets[0].isVisible = !textAssets[0].isVisible;
-    }
+    }*/
 
     // Small state machine using stack collection
     switch (gameStages.top().game_stageID)
@@ -201,6 +164,7 @@ void updateGame(float deltaTime) {
         GSLogoStateUpdate(deltaTime, resourceManager);
         break;
     case GS_MAIN_MENU:
+        GSMainMenuStateUpdate(deltaTime, resourceManager);
         break;
     case GS_GAMEPLAY:
         break;
@@ -246,7 +210,7 @@ int main(int argc, char* argv[])
     // Cargo Assets
     loadAssets();
 
-    Mix_PlayMusic(musicAssets[0].music, -1);
+    //Mix_PlayMusic(musicAssets[0].music, -1);
 
     Uint64 currentTime = SDL_GetTicks64();
 

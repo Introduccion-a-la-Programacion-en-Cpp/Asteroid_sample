@@ -8,6 +8,9 @@ using namespace std;
 #include "SDL_TTF.h"
 #include "SDL_mixer.h"
 
+const int WIDTH = 640;
+const int HEIGHT = 480;
+
 typedef struct _InputState {
     bool up = false;
     bool down = false;
@@ -64,4 +67,5 @@ typedef struct _ResourceManager {
     BgmAssets* musicAssets;
     GameStages* gameStages;
     InputState* inputState;
+    SDL_Renderer* renderer;
 }ResourceManager;

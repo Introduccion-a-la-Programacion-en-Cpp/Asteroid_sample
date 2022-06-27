@@ -219,10 +219,12 @@ xcopy "$(ProjectDir)..\assets" "$(OutDir)\assets" /Y  /E /C /I</Command>
   <ItemGroup>
     <ClCompile Include="../src/SDL_Project.cpp" />
     <ClCompile Include="..\src\GSLogoState.cpp" />
+    <ClCompile Include="..\src\GSMainMenuState.cpp" />
     <ClCompile Include="..\src\InputModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\GSLogoState.h" />
+    <ClInclude Include="..\src\GSMainMenuState.h" />
     <ClInclude Include="..\src\InputModule.h" />
     <ClInclude Include="..\src\StructsDef.h" />
   </ItemGroup>
