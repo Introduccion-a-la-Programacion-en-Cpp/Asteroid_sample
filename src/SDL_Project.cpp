@@ -12,6 +12,7 @@
 #include "InputModule.h"
 #include "GSLogoState.h"
 #include "GSMainMenuState.h"
+#include "GSGameplayState.h"
 
 using namespace std;
 
@@ -51,7 +52,7 @@ void initEngine()
         // handle error
     }
 
-    window = SDL_CreateWindow("SDL2 Template Project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Asteroid Sample Project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     // Initializing Resource Manager
@@ -85,8 +86,6 @@ void destroyEngine() {
 ///////// Funciones de carga y liberacion de recursos /////////////
 
 void loadAssets() {
-
-   
 
     // Cargo Sonidos y BGM
     string soundFilePath = "assets/bgm/littleidea.mp3";
@@ -143,19 +142,7 @@ void inputUpdate() {
     }
 }
 
-// Para ser usado en distintos contadores..
-//float timer = 1.0f * 1000; // 1000 ms
-
 void updateGame(float deltaTime) {
-   /* const float BLINK_SPEED = 5.0f;
-
-    timer -= BLINK_SPEED * deltaTime;
-
-    // para efecto de parpadeo...
-    if (timer <= 0.0f) {
-        timer = 1.0f * 1000;
-        textAssets[0].isVisible = !textAssets[0].isVisible;
-    }*/
 
     // Small state machine using stack collection
     switch (gameStages.top().game_stageID)
@@ -167,6 +154,10 @@ void updateGame(float deltaTime) {
         GSMainMenuStateUpdate(deltaTime, resourceManager);
         break;
     case GS_GAMEPLAY:
+        GSGameplayStateUpdate(deltaTime, resourceManager);
+        break;
+
+    case GS_GAMEPAUSE:
         break;
     case GS_INVALID:
     default:

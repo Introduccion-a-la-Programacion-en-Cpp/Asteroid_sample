@@ -13,10 +13,18 @@ namespace mainmenu {
 		ENDING_STATE,
 	};
 
+	enum MENUOPTIONS {
+		PLAY = 0,
+		HIGHSCORES,
+		MENUITEM_COUNT,
+	};
+
 	int subState = INIT_STATE;
 	int bg_resourceID = -1;
 	// Para ser usado en distintos contadores..
 	float timer = 1.0f * 1000; // 1000 ms
+	int menu_selection = PLAY;
+	int menuselector_resourceID = -1;
 
 	void loadResource(ResourceManager& resource) {
 		SDL_Renderer* renderer = resource.renderer;
@@ -126,6 +134,8 @@ namespace mainmenu {
 
 		textAssets.push_back(menuSelectorText);
 
+		menuselector_resourceID = textAssets.size() - 1;
+
 		// Title
 		// Main Menu options
 		surfaceMessage = TTF_RenderText_Solid(Sans, "Asteroid", White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
@@ -150,11 +160,19 @@ namespace mainmenu {
 	void unloadResource(ResourceManager& resource) {
 
 		SpriteAssets& spritesAssets = *(resource.spritesAssets);
+		TextAssets& textAssets = *(resource.textAssets);
 
 		//Libero la textura
 		SDL_DestroyTexture(spritesAssets[bg_resourceID].texture);
 		// Remuevo el asset del vector y ya no sera pintado nunca mas.
 		spritesAssets.erase(spritesAssets.begin() + bg_resourceID);
+
+		for (int i = 0; i < textAssets.size(); i++) {
+			SDL_FreeSurface(textAssets[i].surface);
+			SDL_DestroyTexture(textAssets[i].texture);
+		}
+
+		textAssets.clear();
 	}
 }
 
@@ -169,6 +187,9 @@ void GSMainMenuStateUpdate(float delta, ResourceManager& resource) {
 	const float BLINK_SPEED = 5.0f;
 
 	timer -= BLINK_SPEED * delta;
+
+	Text titleText;
+	int yOffset = 0; 
 
 	switch (subState) {
 	case INIT_STATE:
@@ -193,6 +214,30 @@ void GSMainMenuStateUpdate(float delta, ResourceManager& resource) {
 		break;
 	case MAINMENU_STATE:
 		// TODO: move cursor and move to next state
+
+		if (inputState.up) {
+			menu_selection--;
+		}
+		else if (inputState.down) {
+			menu_selection++;
+		}
+
+		if (menu_selection < 0) {
+			menu_selection = 0; // clamp on 0 as minimum option
+		}
+
+		if (menu_selection >= MENUITEM_COUNT) {
+			menu_selection = MENUITEM_COUNT - 1; // clamp on highest menu option as maximum avaialable
+		}
+
+		// Now update the position
+		titleText = textAssets[menuselector_resourceID];
+		yOffset = (HEIGHT >> 1) + ( (titleText.dest.h + 10 ) * menu_selection ); // controls the rect's y coordinte
+		textAssets[menuselector_resourceID].dest.y = yOffset;
+
+		if (inputState.fire) {
+			subState = ENDING_STATE;
+		}
 
 		break;
 	case ENDING_STATE:
