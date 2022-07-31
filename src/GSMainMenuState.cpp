@@ -2,6 +2,7 @@
 #include "StructsDef.h"
 #include "SDL.h"
 #include "SDL_image.h"
+#include "MusicDef.h"
 
 
 namespace mainmenu {
@@ -195,6 +196,7 @@ void GSMainMenuStateUpdate(float delta, ResourceManager& resource) {
 	case INIT_STATE:
 		loadResource(resource);
 		subState = PRESSKEY_STATE;
+		PlayBGM(BGM_MAIN_MENU, resource);
 		break;
 	case PRESSKEY_STATE:
 		// para efecto de parpadeo...
@@ -209,7 +211,9 @@ void GSMainMenuStateUpdate(float delta, ResourceManager& resource) {
 			textAssets[1].isVisible = true;
 			textAssets[2].isVisible = true;
 			textAssets[3].isVisible = true;
+			SDL_Delay(1500); //Esperamos 1.5 segundos...
 		}
+
 
 		break;
 	case MAINMENU_STATE:
@@ -244,6 +248,7 @@ void GSMainMenuStateUpdate(float delta, ResourceManager& resource) {
 		// Limpiamos recursos
 		subState = INIT_STATE;
 		unloadResource(resource);
+		StopBGM();
 		//En este caso No removemos el estado MainMenu del stack...
 
 		/// Y agregamos el estado Main Menu que sera actualizado en otro modulo

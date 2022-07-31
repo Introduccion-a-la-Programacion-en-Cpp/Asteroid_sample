@@ -18,6 +18,7 @@ using namespace std;
 
 ///////// Definicion de estructuras /////////////
 #include "StructsDef.h"
+#include "MusicDef.h"
 ///////// Definicion de estructuras /////////////
 
 
@@ -67,8 +68,13 @@ void initEngine()
     GameStage logoGameStage;
     logoGameStage.game_stageID = GS_LOGO;
     logoGameStage.stage_name = "Logo";
-
     gameStages.push(logoGameStage);
+    
+    /*GameStage gameplayGameStage;
+    gameplayGameStage.game_stageID = GS_GAMEPLAY;
+    gameplayGameStage.stage_name = "Gameplay";
+    gameStages.push(gameplayGameStage);
+    */
 }
 
 void destroyEngine() {
@@ -87,15 +93,7 @@ void destroyEngine() {
 
 void loadAssets() {
 
-    // Cargo Sonidos y BGM
-    string soundFilePath = "assets/bgm/littleidea.mp3";
-    Mix_Music* music;
-    music = Mix_LoadMUS(soundFilePath.c_str());
-    
-    Bgm bgm01;
-    bgm01.music = music;
-
-    musicAssets.push_back(bgm01);
+    loadAllMusicAssets(resourceManager);
 
 }
 
@@ -175,7 +173,9 @@ void render()
     // Pinto todos los sprites...
     for (int i = 0; i < spritesAssets.size(); i++) {
         if (spritesAssets[i].isVisible) {
-            SDL_RenderCopy(renderer, spritesAssets[i].texture, NULL, &spritesAssets[i].dest);
+            // srcC = srcC * (color / 255)
+            SDL_SetTextureColorMod(spritesAssets[i].texture, spritesAssets[i].fx_color.r, spritesAssets[i].fx_color.g, spritesAssets[i].fx_color.b);
+            SDL_RenderCopyEx(renderer, spritesAssets[i].texture, NULL, &spritesAssets[i].dest, spritesAssets[i].angle, NULL, spritesAssets[i].flip);
         }
     }
 
@@ -193,7 +193,6 @@ void render()
 ///////// Funciones de actualizacion y pintado /////////////
 
 ///////// Funcione principal y GameLoop /////////////
-
 int main(int argc, char* argv[])
 {
     initEngine();
@@ -240,3 +239,4 @@ int main(int argc, char* argv[])
 //   4. Use la ventana Lista de errores para ver los errores
 //   5. Vaya a Proyecto > Agregar nuevo elemento para crear nuevos archivos de código, o a Proyecto > Agregar elemento existente para agregar archivos de código existentes al proyecto
 //   6. En el futuro, para volver a abrir este proyecto, vaya a Archivo > Abrir > Proyecto y seleccione el archivo .sln
+

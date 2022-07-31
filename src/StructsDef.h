@@ -23,6 +23,9 @@ typedef struct _Sprite {
     SDL_Texture* texture;
     SDL_Rect dest;
     bool isVisible = true;
+    SDL_Color fx_color = { 255, 255, 255, 0 }; //Te be used as FX color
+    double angle = 0.0f; 
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
 }Sprite;
 
 typedef struct _Text {
